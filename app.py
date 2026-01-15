@@ -1,28 +1,29 @@
 import streamlit as st
+import os
 
 # Set page title
-st.set_page_config(page_title="Sawal Gandom, Jawab Chana", page_icon="☕")
+st.set_page_config(page_title="Coffee Request ☕", page_icon="☕")
 
-# Custom CSS for better looking buttons
+# Custom CSS for big, easy-to-tap buttons
 st.markdown("""
     <style>
     .stButton button {
         width: 100%;
-        border-radius: 10px;
-        height: 3em;
-        background-color: #ff4b4b;
-        color: white;
+        border-radius: 15px;
+        height: 3.5em;
+        font-size: 20px !important;
+        font-weight: bold;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# Initialize session state for tracking 'No' clicks
+# Initialize session state
 if 'no_count' not in st.session_state:
     st.session_state.no_count = 0
 if 'finished' not in st.session_state:
     st.session_state.finished = False
 
-# The list of messages you requested
+# Your specific message sequence
 no_msgs = [
     "No",
     "Think again",
@@ -31,12 +32,11 @@ no_msgs = [
     "Pakka?"
 ]
 
-# Title
-st.markdown(f"<h1 style='text-align: center;'>Agr Mei Apky Ghar Au To Ap Mujhy Coffe Pilaogi?</h1>", unsafe_allow_html=True)
+# Bold Heading
+st.markdown("<h1 style='text-align: center;'>Agr Mei Apky Ghar Au To Ap Mujhy Coffe Pilaogi?</h1>", unsafe_allow_html=True)
 
-# Main Logic
 if not st.session_state.finished:
-    # Check if we have exhausted all 'No' options
+    # If she is still clicking 'No' through the sequence
     if st.session_state.no_count < len(no_msgs):
         col1, col2 = st.columns(2)
         
@@ -46,17 +46,23 @@ if not st.session_state.finished:
                 st.rerun()
                 
         with col2:
-            # Show the next 'No' message based on count
             if st.button(no_msgs[st.session_state.no_count]):
                 st.session_state.no_count += 1
                 st.rerun()
+    
+    # After the last 'No', show the Monkey and the mandatory 'Yes'
     else:
-        # The 'No' limit is reached - Show the monkey!
         st.markdown("<h2 style='color: red; text-align: center;'>Bauni Pilani to pregi</h2>", unsafe_allow_html=True)
-        # Using a direct link to the middle-finger monkey image
-        st.image("https://media.tenor.com/images/3f885e3590089e0004e7609f98f6d7f0/tenor.gif", use_container_width=True)
         
-        if st.button("Okay fine, Yes! ☕"):
+        # This looks for the file you uploaded to GitHub
+        if os.path.exists("monkey.jpg"):
+            st.image("monkey.jpg", use_container_width=True)
+        elif os.path.exists("monkey.png"):
+            st.image("monkey.png", use_container_width=True)
+        else:
+            st.warning("Upload 'monkey.jpg' to GitHub to see the photo here!")
+
+        if st.button("YES! (Last Option)"):
             st.session_state.finished = True
             st.rerun()
 
@@ -64,4 +70,3 @@ if not st.session_state.finished:
 else:
     st.balloons()
     st.markdown("<h1 style='text-align: center; color: green;'>Good! ❤️</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>Be ready, I'm coming for that coffee!</p>", unsafe_allow_html=True)
